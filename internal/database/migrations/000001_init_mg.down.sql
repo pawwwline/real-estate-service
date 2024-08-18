@@ -1,0 +1,4 @@
+DROP TABLE if EXISTS house;
+
+DROP TABLE if EXISTS flat;
+
