@@ -2,10 +2,16 @@ package main
 
 import (
 	"os"
+	"net/http"
+	log "log"
+	"real-estate-service/internal/middleware"
 	"real-estate-service/internal/config"
-	"real-estate-service/internal/database"
-	"real-estate-service/internal/utils/logger"
+	database "real-estate-service/internal/database"
+	"real-estate-service/internal/logger"
+	"github.com/go-chi/chi/v5"
 	_"github.com/golang-migrate/migrate/v4/database/postgres"
+	"real-estate-service/api/handlers"
+
 
 )
 
@@ -25,6 +31,24 @@ func main() {
 		os.Exit(1)
 	}
 
-	logger.Info("Application started successfully")
+	r := chi.NewRouter()
 
+    r.Use(middleware.LoggerMiddleware(logger))
+
+    server := &handlers.MyServer{
+        Logger: logger,
+    }
+
+    r.Get("/dummyLogin", func(w http.ResponseWriter, r *http.Request) {
+        userType := r.URL.Query().Get("user_type")
+        params := handlers.GetDummyLoginParams{
+            UserType: handlers.UserType(userType),
+        }
+        server.GetDummyLogin(w, r, params)
+    })
+
+    logger.Info("Starting server on port 8080")
+    if err := http.ListenAndServe(":8080", r); err != nil {
+        log.Fatal("Server failed", "error", err)
+    }
 }
