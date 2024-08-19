@@ -10,16 +10,16 @@ import (
 
 type Config struct {
 	Env        string     `yaml:"env" env:"ENV" env-default:"local"`
-	Storage    Storage    `yaml:"database"`
+	Storage    Storage    `yaml:"db"`
 	HTTPserver HTTPserver `yaml:"httpserver"`
 }
 
 type Storage struct {
 	DbHost     string `yaml:"host" env-default:"localhost"`
 	DbPort     string `yaml:"port" env-default:"5432"`
-	DbUser     string `yaml:"user"`
-	DbPassword string `yaml:"password"`
-	DbName     string `yaml:"name"`
+	DbUser     string `yaml:"user" env-default:"myuser"`
+	DbPassword string `yaml:"password" env-default:"pass"`
+	DbName     string `yaml:"name" env-default:"estatedb"`
 }
 
 type HTTPserver struct {

@@ -246,17 +246,17 @@ func (_ Unimplemented) GetDummyLogin(w http.ResponseWriter, r *http.Request, par
 }
 
 // (POST /flat/create)
-func (u Unimplemented) PostFlatCreate(w http.ResponseWriter, r *http.Request) {
+func (_ Unimplemented) PostFlatCreate(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
 // (POST /flat/update)
-func (u Unimplemented) PostFlatUpdate(w http.ResponseWriter, r *http.Request) {
+func (_ Unimplemented) PostFlatUpdate(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
 // (POST /house/create)
-func (u Unimplemented) PostHouseCreate(w http.ResponseWriter, r *http.Request) {
+func (_ Unimplemented) PostHouseCreate(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 

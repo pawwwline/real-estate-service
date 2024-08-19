@@ -4,11 +4,14 @@ import (
 	"log/slog"
 	"net/http"
 	"real-estate-service/api/generated"
+	"real-estate-service/repository"
 )
 
 type MyServer struct {
 	Logger *slog.Logger
 	generated.Unimplemented
+	HouseRepository repository.HouseRepository
+	FlatRepository  repository.FlatRepository
 }
 
 func (s *MyServer) GetDummyLogin(w http.ResponseWriter, r *http.Request, params generated.GetDummyLoginParams) {
