@@ -27,7 +27,7 @@ func (s *MyServer) PostHouseCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = s.HouseRepository.CreateHouse(&house)
+	err = s.HouseRepositoryInterface.CreateHouse(&house)
 	if err != nil {
 		http.Error(w, "Failed to create house", http.StatusInternalServerError)
 		return

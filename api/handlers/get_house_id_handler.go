@@ -21,9 +21,9 @@ func (s *MyServer) GetHouseId(w http.ResponseWriter, r *http.Request, id generat
 
 	switch user_type {
 	case "client":
-		flats, err = s.FlatRepository.GetApprovedFlatsByHouseId(id)
+		flats, err = s.FlatRepositoryInterface.GetApprovedFlatsByHouseId(id)
 	case "moderator":
-		flats, err = s.FlatRepository.GetFlatsByHouseId(id)
+		flats, err = s.FlatRepositoryInterface.GetFlatsByHouseId(id)
 	default:
 		http.Error(w, "Forbidden", http.StatusForbidden)
 		return

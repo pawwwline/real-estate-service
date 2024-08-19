@@ -6,6 +6,14 @@ import (
 	"real-estate-service/api/generated"
 )
 
+type FlatRepositoryInterface interface {
+	CreateFlat(flat *generated.Flat) error
+	UpdateFlat(flat *generated.Flat) error
+	GetFlatId(flatId generated.FlatId) (*generated.Flat, error)
+	GetFlatsByHouseId(houseId generated.HouseId) ([]generated.Flat, error)
+	GetApprovedFlatsByHouseId(houseId generated.HouseId) ([]generated.Flat, error)
+}
+
 type FlatRepository struct {
 	db *sql.DB
 }

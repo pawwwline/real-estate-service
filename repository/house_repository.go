@@ -6,6 +6,9 @@ import (
 	"real-estate-service/api/generated"
 )
 
+type HouseRepositoryInterface interface {
+	CreateHouse(house *generated.House) error
+}
 type HouseRepository struct {
 	db *sql.DB
 }

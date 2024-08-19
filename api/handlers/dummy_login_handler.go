@@ -10,8 +10,8 @@ import (
 type MyServer struct {
 	Logger *slog.Logger
 	generated.Unimplemented
-	HouseRepository repository.HouseRepository
-	FlatRepository  repository.FlatRepository
+	HouseRepositoryInterface repository.HouseRepositoryInterface
+	FlatRepositoryInterface  repository.FlatRepositoryInterface
 }
 
 func (s *MyServer) GetDummyLogin(w http.ResponseWriter, r *http.Request, params generated.GetDummyLoginParams) {

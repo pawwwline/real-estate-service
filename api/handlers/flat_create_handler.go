@@ -28,7 +28,7 @@ func (s *MyServer) PostFlatCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = s.FlatRepository.CreateFlat(&flat)
+	err = s.FlatRepositoryInterface.CreateFlat(&flat)
 	if err != nil {
 		http.Error(w, "Failed to create flat", http.StatusInternalServerError)
 		return

@@ -27,7 +27,7 @@ func (s *MyServer) PostFlatUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	currentFlat, err := s.FlatRepository.GetFlatId(flat.Id)
+	currentFlat, err := s.FlatRepositoryInterface.GetFlatId(flat.Id)
 	if err != nil {
 		http.Error(w, "Flat not found", http.StatusNotFound)
 		return
@@ -38,13 +38,13 @@ func (s *MyServer) PostFlatUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = s.FlatRepository.UpdateFlat(&flat)
+	err = s.FlatRepositoryInterface.UpdateFlat(&flat)
 	if err != nil {
 		http.Error(w, "Failed to update flat", http.StatusInternalServerError)
 		return
 	}
 
-	err = s.FlatRepository.UpdateFlat(&flat)
+	err = s.FlatRepositoryInterface.UpdateFlat(&flat)
 	if err != nil {
 		http.Error(w, "Failed to create house", http.StatusInternalServerError)
 		return
