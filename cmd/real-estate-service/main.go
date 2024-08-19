@@ -13,7 +13,6 @@ import (
 	"real-estate-service/internal/config"
 	"real-estate-service/internal/logger"
 	"real-estate-service/internal/middleware"
-	tst "real-estate-service/tests"
 )
 
 func main() {
@@ -47,8 +46,7 @@ func main() {
 	}
 
 	Myserver := &handlers.MyServer{
-		Logger:                  logger,
-		FlatRepositoryInterface: tst.mockRepo,
+		Logger: logger,
 	}
 
 	r := generated.HandlerWithOptions(Myserver, options)
