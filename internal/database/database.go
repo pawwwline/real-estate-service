@@ -2,23 +2,24 @@ package db
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
-    "path/filepath"
-	"log/slog"
-	"real-estate-service/internal/config"
-	_"github.com/golang-migrate/migrate/v4/database/postgres"
 	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"log/slog"
+	"path/filepath"
+	"real-estate-service/internal/config"
 
 	_ "github.com/lib/pq"
 )
 
 func ConnectDb(cfg *config.Storage, log *slog.Logger) (*sql.DB, error) {
-	fmt.Printf("Config values: host=%s, port=%s, user=%s, password=%s, name=%s\n",
-	cfg.DbHost, cfg.DbPort, cfg.DbUser, cfg.DbPassword, cfg.DbName)
+	log.Debug("Config values: host=%s, port=%s, user=%s, password=%s, name=%s\n",
+		cfg.DbHost, cfg.DbPort, cfg.DbUser, cfg.DbPassword, cfg.DbName)
 
 	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", cfg.DbUser, cfg.DbPassword, cfg.DbHost, cfg.DbPort, cfg.DbName)
-	fmt.Printf("Using connection string: %s", connStr)
+	log.Debug("Using connection string: %s", connStr)
 	db, err := sql.Open("postgres", connStr)
 	//TO:DO add logger
 	if err != nil {
@@ -34,12 +35,11 @@ func ConnectDb(cfg *config.Storage, log *slog.Logger) (*sql.DB, error) {
 	return db, nil
 }
 
+// ApplyMigrations TO:DO Add logger
+func ApplyMigrations(db *sql.DB, log *slog.Logger, cfg *config.Storage) error {
 
-//TO:DO Add logger
-func ApplyMigrations(db *sql.DB, log *slog.Logger, cfg *config.Storage) error  {
-
-    connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", cfg.DbUser, cfg.DbPassword, cfg.DbHost, cfg.DbPort, cfg.DbName)
-	absPath, err := filepath.Abs("/Users/polinakuznecova/real-estate-service/internal/db/migrations")
+	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", cfg.DbUser, cfg.DbPassword, cfg.DbHost, cfg.DbPort, cfg.DbName)
+	absPath, err := filepath.Abs("/Users/polinakuznecova/real-estate-service/internal/database/migrations")
 	if err != nil {
 		log.Error("Failed to get absolute path", "error", err)
 		return fmt.Errorf("failed to get absolute path: %w", err)
@@ -54,10 +54,10 @@ func ApplyMigrations(db *sql.DB, log *slog.Logger, cfg *config.Storage) error  {
 		return fmt.Errorf("failed to create migrate instance: %w", err)
 	}
 
-	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+	if err := m.Up(); err != nil && !errors.Is(migrate.ErrNoChange, err) {
 		log.Error("failed to apply migrations", "error", err)
 		return fmt.Errorf("failed to apply migrations: %w", err)
 	}
-    
+
 	return nil
 }

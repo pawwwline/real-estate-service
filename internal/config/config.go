@@ -9,8 +9,9 @@ import (
 )
 
 type Config struct {
-	Env string `yaml:"env" env:"ENV" env-default:"local"`
-	Storage Storage  `yaml:"database"`
+	Env        string     `yaml:"env" env:"ENV" env-default:"local"`
+	Storage    Storage    `yaml:"database"`
+	HTTPserver HTTPserver `yaml:"httpserver"`
 }
 
 type Storage struct {
@@ -28,22 +29,21 @@ type HTTPserver struct {
 }
 
 func LoadConfig() (*Config, error) {
-	config_path := os.Getenv("CONFIG_PATH")
-	if config_path == "" {
+	configPath := os.Getenv("CONFIG_PATH")
+	if configPath == "" {
 		log.Fatal("CONFIG_PATH is not set")
 	}
 
-	if _, err := os.Stat(config_path); os.IsNotExist(err) {
-		log.Fatalf("config_file %s does not exist", config_path)
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		log.Fatalf("config_file %s does not exist", configPath)
 	}
 
 	var cfg Config
 
-	err := cleanenv.ReadConfig(config_path, &cfg)
+	err := cleanenv.ReadConfig(configPath, &cfg)
 	if err != nil {
 		log.Fatalf("can not read config %s", err)
 	}
-    
 
 	return &cfg, nil
 
