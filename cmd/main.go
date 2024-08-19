@@ -2,14 +2,15 @@ package main
 
 import (
 	"github.com/go-chi/chi/v5"
+	middleware2 "github.com/go-chi/chi/v5/middleware"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	"real-estate-service/internal/db"
 
 	"net/http"
 	"os"
 	"real-estate-service/api/generated"
 	"real-estate-service/api/handlers"
 	"real-estate-service/internal/config"
-	database "real-estate-service/internal/database"
 	"real-estate-service/internal/logger"
 	"real-estate-service/internal/middleware"
 )
@@ -17,14 +18,14 @@ import (
 func main() {
 	cfg, err := config.LoadConfig()
 	logger := logger.SetupLogger(cfg.Env)
-	db, err := database.ConnectDb(&cfg.Storage, logger)
+	database, err := db.ConnectDb(&cfg.Storage, logger)
 	if err != nil {
-		logger.Error("Failed to connect to database", "error", err)
+		logger.Error("Failed to connect to db", "error", err)
 		os.Exit(1)
 	}
-	defer db.Close()
+	defer database.Close()
 
-	err = database.ApplyMigrations(db, logger, &cfg.Storage)
+	err = db.ApplyMigrations(database, logger, &cfg.Storage)
 	if err != nil {
 		logger.Error("Failed to apply migrations", "error", err)
 		os.Exit(1)
@@ -34,7 +35,9 @@ func main() {
 		BaseURL:    "/api/v1",
 		BaseRouter: chi.NewRouter(),
 		Middlewares: []generated.MiddlewareFunc{
+			middleware2.RequestID,
 			middleware.LoggerMiddleware(logger),
+			middleware.TokenAuth,
 		},
 		ErrorHandlerFunc: func(w http.ResponseWriter, r *http.Request, err error) {
 			logger.Error("Request handling error", "error", err)
