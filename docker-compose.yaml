@@ -21,7 +21,7 @@ services:
       dockerfile: Dockerfile
     container_name: real_estate_service
     environment:
-      CONFIG_PATH: /root/config.yaml
+      CONFIG_PATH: /real-estate-service/config/docker.yaml
       DATABASE_URL: postgres://myuser:pass@db:5432/estatedb
     ports:
       - "8080:8080"
@@ -29,9 +29,6 @@ services:
       - db
     networks:
       - real_estate_network
-    volumes:
-      - ./config:/root/config
-      - ./internal/db/migrations:/root/migrations
 
 networks:
   real_estate_network:

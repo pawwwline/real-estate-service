@@ -261,7 +261,7 @@ func (_ Unimplemented) PostHouseCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 // (GET /house/{id})
-func (u Unimplemented) GetHouseId(w http.ResponseWriter, r *http.Request, id HouseId) {
+func (_ Unimplemented) GetHouseId(w http.ResponseWriter, r *http.Request, id HouseId) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 

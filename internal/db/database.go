@@ -33,8 +33,7 @@ func ConnectDb(cfg *config.Storage, log *slog.Logger) (*sql.DB, error) {
 	}
 
 	if err := db.Ping(); err != nil {
-		return nil, fmt.Errorf("failed to ping db: %w", err)
-
+	 	return nil, fmt.Errorf("failed to ping db: %w", err)
 	}
 
 	return db, nil
@@ -44,7 +43,7 @@ func ConnectDb(cfg *config.Storage, log *slog.Logger) (*sql.DB, error) {
 func ApplyMigrations(db *sql.DB, log *slog.Logger, cfg *config.Storage) error {
 
 	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", cfg.DbUser, cfg.DbPassword, cfg.DbHost, cfg.DbPort, cfg.DbName)
-	absPath, err := filepath.Abs("/Users/polinakuznecova/real-estate-service/internal/db/migrations")
+	absPath, err := filepath.Abs(filepath.Join(".", "internal", "db", "migrations"))
 	if err != nil {
 		log.Error("Failed to get absolute path", "error", err)
 		return fmt.Errorf("failed to get absolute path: %w", err)
