@@ -53,7 +53,7 @@ func main() {
     handler := generated.HandlerWithOptions(server, options)
 
     r.Get("/dummyLogin", func(w http.ResponseWriter, r *http.Request) {
-        params := &generated.GetDummyLoginParams{
+        params := generated.GetDummyLoginParams{
             UserType: generated.UserType(r.URL.Query().Get("user_type")),
         }
         server.GetDummyLogin(w, r, params)
