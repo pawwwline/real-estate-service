@@ -20,21 +20,24 @@
 
 Запрос для пользователя:
 
-```curl -X GET "http://localhost:8080/dummyLogin?usertype=client"```
+```curl -X GET "http://localhost:8080/api/v1/dummyLogin?user_type=client"```
 
 Запрос для модератора:
 
-```curl -X GET "http://localhost:8080/dummyLogin?usertype=moderator"```
+```curl -X GET "http://localhost:8080/api/v1dummyLogin?user_type=moderator"```
 
 
 
-**__Создание нового дома_ (только для модераторов)_**
+**_Создание нового дома (только для модераторов)_**
 
 Отправьте POST запрос на /houses с JSON телом запроса. 
 
 Пример запроса
 
-```curl -X POST http://localhost:8080/houses -d '{"address": "123 Main St", "year": 2024, "developer": "ABC Realty"}' -H "Content-Type: application/json"```
+```curl -X POST http://localhost:8080/api/v1/house/create \
+-H "Authorization: Bearer <moderator_token>" \
+-H "Content-Type: application/json" \
+-d '{"address": "123 Main St", "year": 2024, "developer": "ABC Realty"}'```
 
 
 
@@ -44,7 +47,7 @@
 
 Пример запроса
 
-```curl -X GET "http://localhost:8080/house/123456"```
+```curl -X GET "http://localhost:8080/api/v1/house/123456 -H "Authoriazation: Bearer <token>"```
 
 
 
@@ -54,7 +57,10 @@
 
 Пример запроса
 
-```curl -X POST http://localhost:8080/flat/create -d '{"house_id": 12345, "price": 10000, "rooms": 4}' -H "Content-Type: application/json"```
+``` curl -X POST http://localhost:8080/api/v1/flat/create \
+ -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3R5cGUiOiJ1c2VyIn0.QzcYKfysTUDKFVcLW8T3A_YODiLmXFyP2_CP2kKZeDY" \
+ -H "Content-Type: application/json" \
+ -d '{"house_id": 12345, "price": 10000, "rooms": 4}'```
 
 
 
@@ -63,7 +69,11 @@
 
 Пример запроса 
 
-```curl -X POST http://localhost:8080/flat/update -d '{"id": 123456, "status": "approved"}' -H "Content-Type: application/json"```
+```curl -X POST http://localhost:8080/api/v1/flat/update \
+-H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3R5cGUiOiJtb2RlcmF0b3IifQ.sy5Cgo6lkmgptgG4RggKA4Qwfregs472xP72gMX1upg" \
+-H "Content-Type: application/json" \
+-d '{"id": 1, "status": "approved"}'
+```
 
 
 
