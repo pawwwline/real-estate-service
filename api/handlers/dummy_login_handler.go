@@ -43,7 +43,7 @@ func (s *MyServer) GetDummyLogin(w http.ResponseWriter, r *http.Request, params 
 
 	default:
 		s.Logger.Error("Invalid user type", "user_type", params.UserType)
-		utils.BadRequest(w, r, "Invalid user type")
+		utils.BadRequest(w, r)
 	}
 
 	w.Header().Set("Content-Type", "application/json")

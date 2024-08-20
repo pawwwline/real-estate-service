@@ -4,19 +4,16 @@ import (
 	"encoding/json"
 	"net/http"
 	"real-estate-service/api/generated"
+	"real-estate-service/internal/utils"
 )
 
 func (s *MyServer) PostFlatCreate(w http.ResponseWriter, r *http.Request) {
 	s.Logger.Info("Processing flat create request")
 
 	user_type, ok := r.Context().Value(generated.BearerAuthScopes).(string)
+	s.Logger.Info("User type:", user_type)
 	if !ok {
-		http.Error(w, "Failed to get user_type from context", http.StatusInternalServerError)
-		return
-	}
-
-	if user_type != "moderator" && user_type != "client" {
-		http.Error(w, "Forbidden", http.StatusForbidden)
+		http.Error(w, "Не авторизированный доступ", http.StatusForbidden)
 		return
 	}
 
@@ -24,13 +21,14 @@ func (s *MyServer) PostFlatCreate(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&flat)
 	if err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		http.Error(w, "Невалидные данные", http.StatusBadRequest)
 		return
 	}
 
 	err = s.FlatRepositoryInterface.CreateFlat(&flat)
 	if err != nil {
-		http.Error(w, "Failed to create flat", http.StatusInternalServerError)
+		//http.Error(w, "Failed to create flat", http.StatusInternalServerError)
+		utils.InternalServerError(w, r, "Failed to create flat")
 		return
 	}
 

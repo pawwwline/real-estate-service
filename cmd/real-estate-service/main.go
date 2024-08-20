@@ -34,6 +34,7 @@ func main() {
 	}
 
 	houseRepo := &repository.HouseRepository{Db: database}
+	flatRepo := &repository.FlatRepository{Db: database}
 
 	options := generated.ChiServerOptions{
 		BaseURL:    "/api/v1",
@@ -49,6 +50,7 @@ func main() {
 	Myserver := &handlers.MyServer{
 		Logger:                   logger,
 		HouseRepositoryInterface: houseRepo,
+		FlatRepositoryInterface:  flatRepo,
 	}
 
 	r := generated.HandlerWithOptions(Myserver, options)

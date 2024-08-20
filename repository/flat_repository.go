@@ -15,13 +15,13 @@ type FlatRepositoryInterface interface {
 }
 
 type FlatRepository struct {
-	db *sql.DB
+	Db *sql.DB
 }
 
 func (repo *FlatRepository) CreateFlat(flat *generated.Flat) error {
 
-	query := "INSERT INTO flat (house_id, price, rooms, status) VALUES ($1, $2, $3, $4)"
-	_, err := repo.db.Exec(query, flat.HouseId, flat.Price, flat.Rooms, "created") //Возможно лучше поставить default в бд
+	query := "INSERT INTO flat (house_id, price, rooms) VALUES ($1, $2, $3)"
+	_, err := repo.Db.Exec(query, flat.HouseId, flat.Price, flat.Rooms) //Возможно лучше поставить default в бд
 	if err != nil {
 		return fmt.Errorf("failed to insert flat: %w", err)
 	}
@@ -30,7 +30,7 @@ func (repo *FlatRepository) CreateFlat(flat *generated.Flat) error {
 		UPDATE house
 		SET updated_at = NOW()
 		WHERE id = $1`
-	_, err = repo.db.Exec(houseQuery, flat.HouseId)
+	_, err = repo.Db.Exec(houseQuery, flat.HouseId)
 	if err != nil {
 		return fmt.Errorf("failed to update house: %w", err)
 	}
@@ -41,7 +41,7 @@ func (repo *FlatRepository) CreateFlat(flat *generated.Flat) error {
 func (repo *FlatRepository) GetFlatId(flatId generated.FlatId) (*generated.Flat, error) {
 	query := "SELECT id, status FROM flat WHERE id = $1"
 	flat := &generated.Flat{}
-	row := repo.db.QueryRow(query, flatId)
+	row := repo.Db.QueryRow(query, flatId)
 	err := row.Scan(&flat.Id, &flat.Status)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -67,8 +67,8 @@ func (repo *FlatRepository) UpdateFlat(flat *generated.Flat) error {
 
 	if flat.Status == "on moderation" {
 		var currentStatus string
-		query := "SELECT status FROM flats WHERE id = $1"
-		err := repo.db.QueryRow(query, flat.Id).Scan(&currentStatus)
+		query := "SELECT status FROM flat WHERE id = $1"
+		err := repo.Db.QueryRow(query, flat.Id).Scan(&currentStatus)
 		if err != nil {
 			return fmt.Errorf("failed to check current status: %w", err)
 		}
@@ -77,14 +77,14 @@ func (repo *FlatRepository) UpdateFlat(flat *generated.Flat) error {
 		}
 	}
 
-	query := "UPDATE flats SET status = $1 WHERE id = $2"
-	_, err := repo.db.Exec(query, flat.Status, flat.Id)
+	query := "UPDATE flat SET status = $1 WHERE id = $2"
+	_, err := repo.Db.Exec(query, flat.Status, flat.Id)
 	return err
 }
 
 func (repo *FlatRepository) GetFlatsByHouseId(houseId generated.HouseId) ([]generated.Flat, error) {
-	query := "SELECT id, house_id, price, rooms, status FROM flats WHERE house_id = $1"
-	rows, err := repo.db.Query(query, houseId)
+	query := "SELECT id, house_id, price, rooms, status FROM flat WHERE house_id = $1"
+	rows, err := repo.Db.Query(query, houseId)
 	if err != nil {
 		return nil, err
 	}
@@ -102,8 +102,8 @@ func (repo *FlatRepository) GetFlatsByHouseId(houseId generated.HouseId) ([]gene
 }
 
 func (repo *FlatRepository) GetApprovedFlatsByHouseId(houseId generated.HouseId) ([]generated.Flat, error) {
-	query := "SELECT id, house_id, price, rooms, status FROM flats WHERE house_id = $1 AND status = 'approved'"
-	rows, err := repo.db.Query(query, houseId)
+	query := "SELECT id, house_id, price, rooms, status FROM flat WHERE house_id = $1 AND status = 'approved'"
+	rows, err := repo.Db.Query(query, houseId)
 	if err != nil {
 		return nil, err
 	}

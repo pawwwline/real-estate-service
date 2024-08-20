@@ -10,6 +10,7 @@ func (s *MyServer) GetHouseId(w http.ResponseWriter, r *http.Request, id generat
 	s.Logger.Info("Processing get house by ID request")
 
 	user_type, ok := r.Context().Value(generated.BearerAuthScopes).(string)
+	s.Logger.Debug("User type:", "user_type", user_type)
 
 	if !ok {
 		http.Error(w, "Failed to get role from context", http.StatusInternalServerError)
@@ -20,7 +21,7 @@ func (s *MyServer) GetHouseId(w http.ResponseWriter, r *http.Request, id generat
 	var flats []generated.Flat
 
 	switch user_type {
-	case "client":
+	case "user":
 		flats, err = s.FlatRepositoryInterface.GetApprovedFlatsByHouseId(id)
 	case "moderator":
 		flats, err = s.FlatRepositoryInterface.GetFlatsByHouseId(id)

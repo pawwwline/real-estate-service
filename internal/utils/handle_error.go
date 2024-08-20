@@ -36,12 +36,12 @@ func ErrorHandlerFunc(w http.ResponseWriter, r *http.Request, err error) {
 	}
 }
 
-func BadRequest(w http.ResponseWriter, r *http.Request, message string) {
-	ErrorHandlerFunc(w, r, errors.New(message))
+func BadRequest(w http.ResponseWriter, r *http.Request) {
+	ErrorHandlerFunc(w, r, errors.New("Невалидные данные ввода\n"))
 }
 
-func Unauthorized(w http.ResponseWriter, r *http.Request, message string) {
-	ErrorHandlerFunc(w, r, errors.New(message))
+func Unauthorized(w http.ResponseWriter, r *http.Request) {
+	ErrorHandlerFunc(w, r, errors.New("Неавторизованный доступ"))
 }
 
 func InternalServerError(w http.ResponseWriter, r *http.Request, message string) {

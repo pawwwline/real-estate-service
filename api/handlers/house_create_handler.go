@@ -16,7 +16,7 @@ func (s *MyServer) PostHouseCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if user_type != "moderator" {
-		http.Error(w, "Forbidden", http.StatusForbidden)
+		http.Error(w, "Неавторизованный доступ", http.StatusForbidden)
 		return
 	}
 
@@ -24,18 +24,18 @@ func (s *MyServer) PostHouseCreate(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&house)
 	if err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		http.Error(w, "Невалидные данные ввода", http.StatusBadRequest)
 		return
 	}
 
 	if s.HouseRepositoryInterface == nil {
-		utils.InternalServerError(w, r, "HouseRepositoryInterface is not initialized")
+		utils.InternalServerError(w, r, "что-то пошло не так")
 		return
 	}
 
 	err = s.HouseRepositoryInterface.CreateHouse(&house)
 	if err != nil {
-		http.Error(w, "Failed to create house", http.StatusInternalServerError)
+		utils.InternalServerError(w, r, "что-то пошло не так")
 		return
 	}
 
