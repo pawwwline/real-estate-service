@@ -33,7 +33,7 @@ func ConnectDb(cfg *config.Storage, log *slog.Logger) (*sql.DB, error) {
 	}
 
 	if err := db.Ping(); err != nil {
-	 	return nil, fmt.Errorf("failed to ping db: %w", err)
+		return nil, fmt.Errorf("failed to ping db: %w", err)
 	}
 
 	return db, nil
@@ -62,6 +62,8 @@ func ApplyMigrations(db *sql.DB, log *slog.Logger, cfg *config.Storage) error {
 		log.Error("failed to apply migrations", "error", err)
 		return fmt.Errorf("failed to apply migrations: %w", err)
 	}
+
+	log.Info("Migrations applied successfully")
 
 	return nil
 }

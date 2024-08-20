@@ -5,6 +5,9 @@ import (
 	middleware2 "github.com/go-chi/chi/v5/middleware"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	"real-estate-service/internal/db"
+	"real-estate-service/internal/middleware"
+	"real-estate-service/internal/utils"
+	"real-estate-service/repository"
 
 	"net/http"
 	"os"
@@ -12,7 +15,6 @@ import (
 	"real-estate-service/api/handlers"
 	"real-estate-service/internal/config"
 	"real-estate-service/internal/logger"
-	"real-estate-service/internal/middleware"
 )
 
 func main() {
@@ -31,6 +33,8 @@ func main() {
 		os.Exit(1)
 	}
 
+	houseRepo := &repository.HouseRepository{Db: database}
+
 	options := generated.ChiServerOptions{
 		BaseURL:    "/api/v1",
 		BaseRouter: chi.NewRouter(),
@@ -39,14 +43,12 @@ func main() {
 			middleware.LoggerMiddleware(logger),
 			middleware.TokenAuth,
 		},
-		ErrorHandlerFunc: func(w http.ResponseWriter, r *http.Request, err error) {
-			logger.Error("Request handling error", "error", err)
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-		},
+		ErrorHandlerFunc: utils.ErrorHandlerFunc,
 	}
 
 	Myserver := &handlers.MyServer{
-		Logger: logger,
+		Logger:                   logger,
+		HouseRepositoryInterface: houseRepo,
 	}
 
 	r := generated.HandlerWithOptions(Myserver, options)

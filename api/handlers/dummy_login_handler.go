@@ -4,6 +4,8 @@ import (
 	"log/slog"
 	"net/http"
 	"real-estate-service/api/generated"
+	"real-estate-service/internal/services/auth"
+	"real-estate-service/internal/utils"
 	"real-estate-service/repository"
 )
 
@@ -18,17 +20,33 @@ func (s *MyServer) GetDummyLogin(w http.ResponseWriter, r *http.Request, params 
 	// Logger
 	s.Logger.Info("Processing login request", "user_type", params.UserType)
 
+	var message string
+
 	switch params.UserType {
 	case "moderator":
 		s.Logger.Info("Moderator login successful")
-		w.Write([]byte("Moderator login successful"))
+		token, err := auth.CreateToken("moderator")
+		if err != nil {
+			s.Logger.Error("Error creating token", "error", err)
+			utils.InternalServerError(w, r, err.Error())
+		}
+		message = "Успешная аутентификация Token: " + token
 
-	case "user":
+	case "client":
 		s.Logger.Info("User login successful")
-		w.Write([]byte("User login successful"))
+		token, err := auth.CreateToken("user")
+		if err != nil {
+			s.Logger.Error("Error creating token", "error", err)
+			utils.InternalServerError(w, r, err.Error())
+		}
+		message = "Успешная аутентификация Token: " + token
 
 	default:
 		s.Logger.Error("Invalid user type", "user_type", params.UserType)
-		http.Error(w, "Invalid user type", http.StatusBadRequest)
+		utils.BadRequest(w, r, "Invalid user type")
 	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(message))
 }

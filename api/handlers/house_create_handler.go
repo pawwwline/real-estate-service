@@ -4,13 +4,14 @@ import (
 	"encoding/json"
 	"net/http"
 	"real-estate-service/api/generated"
+	"real-estate-service/internal/utils"
 )
 
 func (s *MyServer) PostHouseCreate(w http.ResponseWriter, r *http.Request) {
 	s.Logger.Info("Processing house create request")
 	user_type, ok := r.Context().Value(generated.BearerAuthScopes).(string)
 	if !ok {
-		http.Error(w, "Failed to get role from context", http.StatusInternalServerError)
+		utils.InternalServerError(w, r, "Invalid or missing user type")
 		return
 	}
 
@@ -24,6 +25,11 @@ func (s *MyServer) PostHouseCreate(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&house)
 	if err != nil {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+
+	if s.HouseRepositoryInterface == nil {
+		utils.InternalServerError(w, r, "HouseRepositoryInterface is not initialized")
 		return
 	}
 
